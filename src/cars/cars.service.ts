@@ -1,33 +1,69 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Car } from './interfaces/car.interface';
+import { v4 as uuidv4 } from 'uuid';
+import { CreateCarDto, UpdateCarDto } from './dtos/index';
 
 @Injectable()
 export class CarsService {
-  private cars = [
+  private cars: Car[] = [
     {
-      id: 1,
+      id: uuidv4(),
       brand: 'Jeep',
       model: 'KK',
     },
     {
-      id: 2,
+      id: uuidv4(),
       brand: 'Toyota',
       model: 'Yaris',
     },
     {
-      id: 3,
+      id: uuidv4(),
       brand: 'Chevrolet',
       model: 'Grand Vitara XL5',
     },
   ];
 
-  findAll(){
+  findAll() {
     return this.cars;
   }
 
-  findOneById(id:number){
-    const car = this.cars.filter(car => car.id==id)[0];
-    if (!car)
-      throw new NotFoundException('El carro no existe');
+  findOneById(id: string) {
+    const car = this.cars.filter((car) => car.id === id)[0];
+    if (!car) throw new NotFoundException('El carro no existe');
     return car;
+  }
+
+  create(createCarDto: CreateCarDto) {
+    let car: Car = {
+      id: uuidv4(),
+      ...createCarDto,
+    };
+
+    this.cars.push(car);
+
+    return car;
+  }
+
+  update(updateCarDto: UpdateCarDto) {
+    let carDB = this.findOneById(updateCarDto.id);
+
+    this.cars = this.cars.map((car) => {
+      if (car.id===updateCarDto.id){
+        carDB = {
+          ...carDB,
+          ...updateCarDto,
+        };
+        return carDB;
+      }
+      return car;
+    });
+
+    return carDB;
+  }
+
+  delete(id:string){
+    const car = this.findOneById(id);
+    this.cars = this.cars.filter((car) => car.id != id);
+    return `Registro ${car.model} eliminado`;
   }
 }
