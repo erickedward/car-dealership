@@ -13,8 +13,6 @@ import {
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
 import { CreateCarDto } from './dtos/create-car.dto';
-import { Car } from './interfaces/car.interface';
-import { v4 as uuidv4 } from 'uuid';
 import { UpdateCarDto } from './dtos/update-car.dto';
 
 @Controller('cars')
